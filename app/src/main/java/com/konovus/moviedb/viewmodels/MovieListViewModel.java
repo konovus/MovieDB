@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
 public class MovieListViewModel extends ViewModel {
 
     private MovieRepository movieRepository;
+
     public MovieListViewModel() {
         movieRepository = MovieRepository.getInstance();
     }

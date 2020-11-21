@@ -1,6 +1,8 @@
 package com.konovus.moviedb;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -14,16 +16,27 @@ import com.konovus.moviedb.response.MovieResponse;
 import com.konovus.moviedb.response.MovieSearchResponse;
 import com.konovus.moviedb.utils.Credentials;
 import com.konovus.moviedb.utils.MovieAPI;
+import com.konovus.moviedb.viewmodels.MovieListViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private MovieListViewModel movieListViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        movieListViewModel = new ViewModelProvider(this).get(MovieListViewModel.class);
+        movieListViewModel.getMovies().observe(this, new Observer<List<MovieModel>>() {
+            @Override
+            public void onChanged(List<MovieModel> movieModels) {
+                
+            }
+        });
 
         getRetrofitResponse();
         findById(26389);

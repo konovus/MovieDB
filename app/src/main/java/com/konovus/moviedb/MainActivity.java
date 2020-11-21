@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         movieListViewModel.getMovies().observe(this, new Observer<List<MovieModel>>() {
             @Override
             public void onChanged(List<MovieModel> movieModels) {
-                
+
             }
         });
 

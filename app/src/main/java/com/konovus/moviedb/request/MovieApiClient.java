@@ -47,8 +47,9 @@ public class MovieApiClient {
             @Override
             public void run() {
                 myHandler.cancel(true);
+
             }
-        }, 5000, TimeUnit.MICROSECONDS);
+        }, 5000, TimeUnit.MILLISECONDS);
     }
 
     private class RetrieveMoviesRunnable implements Runnable{
@@ -65,6 +66,7 @@ public class MovieApiClient {
         @Override
         public void run() {
             try {
+
                 Response response = getMovies(query, pageNumber).execute();
                 if(cancelRequest)
                     return;

@@ -31,15 +31,30 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         movieListViewModel = new ViewModelProvider(this).get(MovieListViewModel.class);
+
+        ObserveAnyChange();
+
+//        getRetrofitResponse();
+//        findById(26389);
+        searchMovieApi("xxx", 1);
+
+    }
+
+    private void ObserveAnyChange(){
         movieListViewModel.getMovies().observe(this, new Observer<List<MovieModel>>() {
             @Override
             public void onChanged(List<MovieModel> movieModels) {
-
+                if(movieModels != null)
+                    for(MovieModel movie : movieModels)
+                        System.out.println("\nTitle: " + movie.getTitle()
+                                + "\n score: " + movie.getVote_average()
+                                + "\n id: " + movie.getId());
             }
         });
+    }
 
-        getRetrofitResponse();
-        findById(26389);
+    private void searchMovieApi(String query, int pageNumber){
+        movieListViewModel.searchMovieApi(query, pageNumber);
     }
 
     private void getRetrofitResponse(){

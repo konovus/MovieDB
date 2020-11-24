@@ -77,6 +77,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
             imageView = itemView.findViewById(R.id.movie_img);
             ratingBar = itemView.findViewById(R.id.rating_bar);
 
+            this.onMovieListener = onMovieListener;
             itemView.setOnClickListener(this);
 
         }

@@ -1,6 +1,8 @@
 package com.konovus.moviedb;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,17 +35,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         recyclerView = findViewById(R.id.recycler_view);
 
         movieListViewModel = new ViewModelProvider(this).get(MovieListViewModel.class);
 
         configureRecyclerView();
         ObserveAnyChange();
-
+        configureSearchView();
 //        getRetrofitResponse();
 //        findById(26389);
-        searchMovieApi("fast", 1);
-
+//        searchMovieApi("fast", 1);
     }
 
     private void ObserveAnyChange(){
@@ -66,8 +70,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
 
     private void getRetrofitResponse(){
         MovieAPI movieAPI = Servicey.getMovieAPI();
-
-
 
         Call<MovieSearchResponse> responseCall = movieAPI
                 .searchMovie(Credentials.API_Key,
@@ -126,5 +128,21 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
     @Override
     public void OnCategoryClick(String category) {
 
+    }
+
+    private void configureSearchView(){
+        final SearchView searchView = findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                movieListViewModel.searchMovieApi(query, 1);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 }

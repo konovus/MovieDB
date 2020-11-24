@@ -1,5 +1,6 @@
 package com.konovus.moviedb;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -99,6 +100,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
 
         recyclerView.setAdapter(movieAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if(!recyclerView.canScrollVertically(1)){
+                    movieListViewModel.searchNextPage();
+                }
+            }
+        });
     }
     private void findMovieById(int id){
         MovieAPI movieAPI = Servicey.getMovieAPI();

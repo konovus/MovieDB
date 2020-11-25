@@ -37,7 +37,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull MovieAdapter.ViewHolder holder, int position) {
         holder.title.setText(movies.get(position).getTitle());
         holder.releaseDate.setText(movies.get(position).getRelease_date());
-        holder.duration.setText(String.valueOf(movies.get(position).getRuntime()));
+        holder.original_language.setText(movies.get(position).getOriginal_language());
 
         holder.ratingBar.setRating(movies.get(position).getVote_average()/2);
 
@@ -61,7 +61,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 //        Widgets
-        TextView title, releaseDate, duration;
+        TextView title, releaseDate, original_language;
         ImageView imageView;
         RatingBar ratingBar;
 
@@ -73,7 +73,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
             title = itemView.findViewById(R.id.movie_title);
             releaseDate = itemView.findViewById(R.id.movie_releaseDate);
-            duration = itemView.findViewById(R.id.movie_duration);
+            original_language = itemView.findViewById(R.id.movie_duration);
             imageView = itemView.findViewById(R.id.movie_img);
             ratingBar = itemView.findViewById(R.id.rating_bar);
 
@@ -86,6 +86,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         public void onClick(View v) {
             onMovieListener.OnMovieClick(getAdapterPosition());
         }
+    }
+
+    public MovieModel getSelectedMovie(int position){
+        if(movies != null && movies.size() > 0)
+            return movies.get(position);
+        return null;
     }
 
     public interface OnMovieListener{

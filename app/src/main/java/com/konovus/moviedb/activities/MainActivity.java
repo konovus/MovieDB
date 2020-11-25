@@ -1,4 +1,4 @@
-package com.konovus.moviedb;
+package com.konovus.moviedb.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,8 +12,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import com.konovus.moviedb.R;
 import com.konovus.moviedb.adapters.MovieAdapter;
 import com.konovus.moviedb.models.MovieModel;
 import com.konovus.moviedb.request.Servicey;
@@ -46,9 +48,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
         configureRecyclerView();
         ObserveAnyChange();
         configureSearchView();
-//        getRetrofitResponse();
-//        findById(26389);
-//        searchMovieApi("fast", 1);
+
     }
 
     private void ObserveAnyChange(){
@@ -56,11 +56,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
             @Override
             public void onChanged(List<MovieModel> movieModels) {
                 if(movieModels != null)
-                    for(MovieModel movie : movieModels)
-                        System.out.println("\nTitle: " + movie.getTitle()
-                                + "\n score: " + movie.getVote_average()
-                                + "\n id: " + movie.getId());
-                movieAdapter.setMovies(movieModels);
+                    movieAdapter.setMovies(movieModels);
             }
         });
     }
@@ -132,7 +128,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
 
     @Override
     public void OnMovieClick(int position) {
-
+        Intent intent = new Intent(MainActivity.this, MovieDetailsActivity.class);
+        intent.putExtra("movie", movieAdapter.getSelectedMovie(position));
+        startActivity(intent);
     }
 
     @Override

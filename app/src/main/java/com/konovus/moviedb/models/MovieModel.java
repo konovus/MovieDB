@@ -11,17 +11,17 @@ public class MovieModel implements Parcelable {
     private String overview;
     private int id;
     private float vote_average;
-    private int runtime;
+    private String original_language;
 
     public MovieModel(String title, String poster_path, String release_date, String overview, int movie_id
-            , float vote_average, int runtime) {
+            , float vote_average, String runtime) {
         this.title = title;
         this.poster_path = poster_path;
         this.release_date = release_date;
         this.overview = overview;
         this.id = movie_id;
         this.vote_average = vote_average;
-        this.runtime = runtime;
+        this.original_language = runtime;
     }
 
     protected MovieModel(Parcel in) {
@@ -31,7 +31,7 @@ public class MovieModel implements Parcelable {
         overview = in.readString();
         id = in.readInt();
         vote_average = in.readFloat();
-        runtime = in.readInt();
+        original_language = in.readString();
     }
 
     public static final Creator<MovieModel> CREATOR = new Creator<MovieModel>() {
@@ -50,8 +50,8 @@ public class MovieModel implements Parcelable {
         return title;
     }
 
-    public int getRuntime() {
-        return runtime;
+    public String getOriginal_language() {
+        return original_language;
     }
 
     public void setTitle(String title) {

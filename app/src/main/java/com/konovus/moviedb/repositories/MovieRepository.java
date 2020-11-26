@@ -27,6 +27,7 @@ public class MovieRepository {
     }
 
     public LiveData<List<MovieModel>> getMovies(){return  movieApiClient.getMovies();}
+    public LiveData<List<MovieModel>> getPopularMovies(){return  movieApiClient.getMoviesPopular();}
 
     public void searchMovieApi(String query, int pageNumber){
         mQuery = query;

@@ -17,11 +17,15 @@ import retrofit2.Response;
 
 public class MovieApiClient {
 
+//    LiveData for search movies
     private MutableLiveData<List<MovieModel>> mMovies;
+//    LiveData for popular movies
+    private MutableLiveData<List<MovieModel>> mMoviesPopular;
 
     private static MovieApiClient instance;
 
     private RetrieveMoviesRunnable retrieveMoviesRunnable;
+    private RetrieveMoviesRunnable retrieveMoviesRunnablePopular;
 
     public static MovieApiClient getInstance(){
         if(instance == null)
@@ -31,10 +35,14 @@ public class MovieApiClient {
 
     public MovieApiClient() {
         mMovies = new MutableLiveData<>();
+        mMoviesPopular = new MutableLiveData<>();
     }
 
     public LiveData<List<MovieModel>> getMovies(){
         return mMovies;
+    }
+    public LiveData<List<MovieModel>> getMoviesPopular(){
+        return mMoviesPopular;
     }
 
     public void searchMovieApi(String query, int pageNumber){
@@ -52,6 +60,54 @@ public class MovieApiClient {
         }, 5000, TimeUnit.MILLISECONDS);
     }
 
+//    private class RetrieveMoviesRunnable implements Runnable{
+//        private String query;
+//        private int pageNumber;
+//        boolean cancelRequest;
+//
+//        public RetrieveMoviesRunnable(String query, int pageNumber) {
+//            this.query = query;
+//            this.pageNumber = pageNumber;
+//            cancelRequest = false;
+//        }
+//
+//        @Override
+//        public void run() {
+//            try {
+//
+//                Response response = getMovies(query, pageNumber).execute();
+//                if(cancelRequest)
+//                    return;
+//                if(response.isSuccessful()){
+//                    List<MovieModel> list = ((MovieSearchResponse) response.body()).getMovies();
+//                    if(pageNumber == 1)
+//                        mMovies.postValue(list);
+//                    else{
+//                        List<MovieModel> currentList = mMovies.getValue();
+//                        currentList.addAll(list);
+//                        mMovies.postValue(currentList);
+//                    }
+//                } else mMovies.postValue(null);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//
+//
+//        }
+//
+//        private Call<MovieSearchResponse> getMovies(String query, int pageNumber){
+//            return Servicey.getMovieAPI().searchMovie(
+//                    Credentials.API_Key,
+//                    query,
+//                    String.valueOf(pageNumber)
+//            );
+//        }
+//
+//        private void cancelRequest(){
+//            cancelRequest = true;
+//        }
+//    }
     private class RetrieveMoviesRunnable implements Runnable{
         private String query;
         private int pageNumber;
@@ -66,26 +122,41 @@ public class MovieApiClient {
         @Override
         public void run() {
             try {
+                Response response;
+                if(query == null)
+                    response = getPopularMovies(pageNumber).execute();
+                else
+                    response = getMovies(query, pageNumber).execute();
 
-                Response response = getMovies(query, pageNumber).execute();
                 if(cancelRequest)
                     return;
+
                 if(response.isSuccessful()){
                     List<MovieModel> list = ((MovieSearchResponse) response.body()).getMovies();
-                    if(pageNumber == 1)
-                        mMovies.postValue(list);
-                    else{
-                        List<MovieModel> currentList = mMovies.getValue();
-                        currentList.addAll(list);
-                        mMovies.postValue(currentList);
+                    if(pageNumber == 1) {
+                        if(query == null)
+                            mMoviesPopular.postValue(list);
+                        else
+                            mMovies.postValue(list);
+                    } else{
+                        List<MovieModel> currentList;
+                        if(query == null){
+                            currentList = mMoviesPopular.getValue();
+                            currentList.addAll(list);
+                            mMoviesPopular.postValue(currentList);
+                        } else {
+                            currentList = mMovies.getValue();
+                            currentList.addAll(list);
+                            mMovies.postValue(currentList);
+                        }
                     }
-                } else mMovies.postValue(null);
+                } else if(query == null)
+                    mMoviesPopular.postValue(null);
+                  else
+                      mMovies.postValue(null);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
-
         }
 
         private Call<MovieSearchResponse> getMovies(String query, int pageNumber){
@@ -95,9 +166,16 @@ public class MovieApiClient {
                     String.valueOf(pageNumber)
             );
         }
+        private Call<MovieSearchResponse> getPopularMovies(int pageNumber){
+            return Servicey.getMovieAPI().getPopularMovies(
+                    Credentials.API_Key,
+                    pageNumber
+            );
+        }
 
         private void cancelRequest(){
             cancelRequest = true;
         }
     }
+
 }

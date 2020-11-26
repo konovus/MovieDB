@@ -18,7 +18,9 @@
         android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:queryHint="search Movie"/>
+        app:queryHint="Search movie"
+        android:layoutDirection="rtl"
+        android:iconifiedByDefault="true"/>
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView

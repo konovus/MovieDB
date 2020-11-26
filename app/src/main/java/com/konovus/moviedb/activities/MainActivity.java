@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
 
     private MovieListViewModel movieListViewModel;
 
+    private boolean isPopular = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,12 +49,26 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
 
         configureRecyclerView();
         ObserveAnyChange();
+        ObservePopularMoviesChange();
         configureSearchView();
+
+        movieListViewModel.searchMovieApi(null, 1);
+
+
 
     }
 
     private void ObserveAnyChange(){
         movieListViewModel.getMovies().observe(this, new Observer<List<MovieModel>>() {
+            @Override
+            public void onChanged(List<MovieModel> movieModels) {
+                if(movieModels != null)
+                    movieAdapter.setMovies(movieModels);
+            }
+        });
+    }
+    private void ObservePopularMoviesChange(){
+        movieListViewModel.getPopularMovies().observe(this, new Observer<List<MovieModel>>() {
             @Override
             public void onChanged(List<MovieModel> movieModels) {
                 if(movieModels != null)
@@ -92,15 +108,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
 
     private void configureRecyclerView(){
 //        LiveData cannot be passed to constructor
-        movieAdapter = new MovieAdapter(this);
+        movieAdapter = new MovieAdapter(this, isPopular);
 
         recyclerView.setAdapter(movieAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if(!recyclerView.canScrollVertically(1)){
+                if(!recyclerView.canScrollHorizontally(1)){
                     movieListViewModel.searchNextPage();
                 }
             }
@@ -143,6 +159,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
+//                movieAdapter = new MovieAdapter(MainActivity.this, false);
+//                recyclerView.setAdapter(movieAdapter);
+
                 movieListViewModel.searchMovieApi(query, 1);
                 return false;
             }
@@ -152,5 +172,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
                 return false;
             }
         });
+
+        searchView.setOnClickListener((view) -> isPopular = false);
     }
 }
